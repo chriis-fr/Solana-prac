@@ -1,6 +1,7 @@
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
+import "dotenv/config"
 
-const publicKey = new PublicKey("HgWuyzbnf21WAWytqZQAVyJvAUQRWZKdBDq9WSzYAJfu")
+const publicKey = new PublicKey(process.env.PUBLIC_KEY)
 
 const connection = new Connection("https://api.devnet.solana.com", "confirmed")
 
