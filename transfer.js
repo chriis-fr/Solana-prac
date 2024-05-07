@@ -1,49 +1,41 @@
 import {
-    Connection,
-    Transaction,
-    SystemProgram,
-    sendAndConfirmTransaction,
-    PublicKey,
-} from "@solana/web3.js";
+  Connection,
+  Transaction,
+  SystemProgram,
+  sendAndConfirmTransaction,
+  PublicKey
+} from  "@solana/web3.js"
 import "dotenv/config"
-import { getKeypairFromEnvironment} from "@solana-developers/helpers";
+import { getKeypairFromEnvironment} from "@solana-developers/helpers"
 
-const suppliedToPubkey = "3nzHdTxQbPhRvUSDuZuiFinzbCctDQ9LCc31YDT58mWL"
+const sendTo = "VqB9Rhocbe1Bk8DijDy6kKGbvPtWprAFa66PwxUFSts"
 
-if (!suppliedToPubkey) {
-  console.log(`Please provide a public key to send to`);
-  process.exit(1);
-}
+const senderKeyPair = getKeypairFromEnvironment("SECRET_KEY")
 
-const senderKeypair = getKeypairFromEnvironment("SECRET_KEY");
+console.log(`supplied to public key: ${sendTo}`)
 
-console.log(`suppliedToPubkey: ${suppliedToPubkey}`);
+const toPubkey = new PublicKey(sendTo)
 
-const toPubkey = new PublicKey(suppliedToPubkey);
+const connection = new Connection("https://api.devnet.solana.com", "confirmed")
 
-const connection = new Connection("https://api.devnet.solana.com", "confirmed");
+console.log("loaded, connected to solana")
 
-console.log(
-    `✅ Loaded our own keypair, the destination public key, and connected to Solana`
-  );
-  
-  const transaction = new Transaction();
-  
-  const LAMPORTS_TO_SEND = 5000;
-  
-  const sendSolInstruction = SystemProgram.transfer({
-    fromPubkey: senderKeypair.publicKey,
-    toPubkey,
-    lamports: LAMPORTS_TO_SEND,
-  });
-  
-  transaction.add(sendSolInstruction);
-  
-  const signature = await sendAndConfirmTransaction(connection, transaction, [
-    senderKeypair,
-  ]);
-  
-  console.log(
-    `💸 Finished! Sent ${LAMPORTS_TO_SEND} to the address ${toPubkey}. `
-  );
-  console.log(`Transaction signature is ${signature}!`);
+
+const transaction = new Transaction()
+
+const LAMPORTS_TO_SEND = 5000;
+
+const sendSolInstruction = SystemProgram.transfer({
+  fromPubkey: senderKeyPair.publicKey,
+  toPubkey,
+  lamports: LAMPORTS_TO_SEND,
+})
+
+transaction.add(sendSolInstruction)
+
+const signature = await sendAndConfirmTransaction(connection, transaction, [
+  senderKeyPair,
+])
+
+console.log(`finished! sent ${LAMPORTS_TO_SEND} to address ${toPubKey}.`)
+console.log(`transaction signature is ${signature}`)
